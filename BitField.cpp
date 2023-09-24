@@ -42,11 +42,11 @@ unsigned int BitField::BitMask(unsigned int task, unsigned int location)
 
 BitField::BitField()
 {
-	bitarray = new unsigned int(1);
+	bitarray = new unsigned int[1];
 	used_bits = 0;
 	reserved_ints = 1;
 
-	for (int i = 0; i < reserved_ints; i++)
+	for (unsigned int i = 0; i < reserved_ints; i++)
 	{
 		bitarray[i] = 0;
 	}
@@ -54,11 +54,11 @@ BitField::BitField()
 
 BitField::BitField(unsigned int& n)
 {
-	bitarray = new unsigned int(n);
+	bitarray = new unsigned int[n];
 	used_bits = 0;
 	reserved_ints = n;
 
-	for (int i = 0; i < reserved_ints; i++)
+	for (unsigned int i = 0; i < reserved_ints; i++)
 	{
 		bitarray[i] = 0;
 	}
@@ -68,9 +68,9 @@ BitField::BitField(BitField& obj2)
 {
 	used_bits = obj2.used_bits;
 	reserved_ints = obj2.reserved_ints;
-	bitarray = new unsigned int(obj2.reserved_ints);
+	bitarray = new unsigned int[obj2.reserved_ints];
 
-	for (int i = 0; i < reserved_ints; i++)
+	for (unsigned int i = 0; i < reserved_ints; i++)
 	{
 		bitarray[i] = obj2.bitarray[i];
 	}
@@ -81,7 +81,7 @@ BitField::~BitField()
 	delete[] bitarray;
 }
 
-bool BitField::operator ==(BitField& obj2)
+bool BitField::operator ==(const BitField& obj2)
 {
 	bool result = 1;
 
@@ -91,7 +91,7 @@ bool BitField::operator ==(BitField& obj2)
 	}
 	else
 	{
-		for (int i = 0; i < reserved_ints; i++)
+		for (unsigned int i = 0; i < reserved_ints; i++)
 		{
 			if (bitarray[i] != obj2.bitarray[i])
 			{
@@ -104,17 +104,17 @@ bool BitField::operator ==(BitField& obj2)
 	return result;
 }
 
-BitField BitField::operator =(BitField& obj2)
+BitField& BitField::operator =(const BitField& obj2)
 {
 	if (this != &obj2)
 	{
 		if (reserved_ints != obj2.reserved_ints)
 		{
 			reserved_ints = obj2.reserved_ints;
-			bitarray = new unsigned int(obj2.reserved_ints);
+			bitarray = new unsigned int[obj2.reserved_ints];
 		}
 
-		for (int i = 0; i < reserved_ints; i++)
+		for (unsigned int i = 0; i < reserved_ints; i++)
 		{
 			bitarray[i] = obj2.bitarray[i];
 		}
@@ -125,7 +125,7 @@ BitField BitField::operator =(BitField& obj2)
 	return *this;
 }
 
-BitField& BitField::operator &(BitField& obj2)
+BitField BitField::operator &(const BitField& obj2)
 {
 	unsigned int result_bitfield_size;
 	int smaller_bitfield_size;
@@ -152,7 +152,7 @@ BitField& BitField::operator &(BitField& obj2)
 	return result;
 }
 
-BitField& BitField::operator |(BitField& obj2)
+BitField BitField::operator |(const BitField& obj2)
 {
 	unsigned int result_bitfield_size;
 	int smaller_bitfield_size;
@@ -178,14 +178,14 @@ BitField& BitField::operator |(BitField& obj2)
 
 	if (smaller_bitfield_size == reserved_ints)
 	{
-		for (int i = 0; i < obj2.reserved_ints; i++)
+		for (unsigned int i = 0; i < obj2.reserved_ints; i++)
 		{
 			result.bitarray[i] = obj2.bitarray[i];
 		}
 	}
 	else if (smaller_bitfield_size == obj2.reserved_ints)
 	{
-		for (int i = 0; i < reserved_ints; i++)
+		for (unsigned int i = 0; i < reserved_ints; i++)
 		{
 			result.bitarray[i] = bitarray[i];
 		}

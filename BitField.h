@@ -16,11 +16,11 @@ public:
 	void TurnOff(unsigned int index);
 	bool CheckState(unsigned int index);
 
-	BitField operator =(BitField& obj2);
-	bool operator ==(BitField& obj2);
+	BitField& operator =(const BitField& obj2);
+	bool operator ==(const BitField& obj2);
 
-	BitField& operator &(BitField& obj2);
-	BitField& operator |(BitField& obj2);
+	BitField operator &(const BitField& obj2);
+	BitField operator |(const BitField& obj2);
 
 	BitField(); //Make a constant
 	BitField(unsigned int& n);

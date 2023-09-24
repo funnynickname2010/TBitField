@@ -9,9 +9,10 @@ void Interface();
 void InputRow(BitField& obj);
 void OutputRow(BitField& obj);
 
-void main()
+int main()
 {
 	int option = 6;
+	unsigned int ind, val;
 	BitField field1(BITFIELD_SIZE);
 	BitField field2(BITFIELD_SIZE);
 	BitField field_result(BITFIELD_SIZE);
@@ -29,8 +30,6 @@ void main()
 			break;
 
 		case 2:
-
-			unsigned int ind, val;
 
 			do
 			{
@@ -61,8 +60,6 @@ void main()
 			break;
 
 		case 3:
-
-			unsigned int ind, val;
 
 			do
 			{
@@ -137,7 +134,7 @@ void OutputRow(BitField& obj)
 {
 	std::string output;
 
-	for (int i = 0; i < obj.used_bits; i++)
+	for (unsigned int i = 0; i < obj.used_bits; i++)
 	{
 		output[i] = (obj.CheckState(i));
 	}
