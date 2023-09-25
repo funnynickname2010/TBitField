@@ -157,7 +157,15 @@ BitField BitField::operator &(const BitField& obj2)
 	}
 
 	BitField result(result_bitfield_size);
-	result.used_bits = result_bitfield_size;
+
+	if (used_bits > obj2.used_bits)
+	{
+		result.used_bits = used_bits;
+	}
+	else
+	{
+		result.used_bits = obj2.used_bits;
+	}
 
 	for (int i = 0; i < smaller_bitfield_size; i++)
 	{
@@ -184,7 +192,15 @@ BitField BitField::operator |(const BitField& obj2)
 	}
 
 	BitField result(result_bitfield_size);
-	result.used_bits = result_bitfield_size;
+
+	if (used_bits > obj2.used_bits)
+	{
+		result.used_bits = used_bits;
+	}
+	else
+	{
+		result.used_bits = obj2.used_bits;
+	}
 
 	for (int i = 0; i < smaller_bitfield_size; i++)
 	{
@@ -193,14 +209,14 @@ BitField BitField::operator |(const BitField& obj2)
 
 	if (smaller_bitfield_size == reserved_ints)
 	{
-		for (unsigned int i = 0; i < obj2.reserved_ints; i++)
+		for (unsigned int i = smaller_bitfield_size; i < obj2.reserved_ints; i++)
 		{
 			result.bitarray[i] = obj2.bitarray[i];
 		}
 	}
 	else if (smaller_bitfield_size == obj2.reserved_ints)
 	{
-		for (unsigned int i = 0; i < reserved_ints; i++)
+		for (unsigned int i = smaller_bitfield_size; i < reserved_ints; i++)
 		{
 			result.bitarray[i] = bitarray[i];
 		}
