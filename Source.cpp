@@ -2,20 +2,28 @@
 #include <string>
 #include <sstream>
 
-void CorrectInput(int left_index, int right_index);
 void Interface();
 void InputRow(BitField& obj);
 void OutputRow(BitField& obj);
-unsigned int bit_field_len = 30;
 
 int main()
 {
+	unsigned int bit_field_len_bits = 30;
+	std::cout << "Input size of the fields: ";
+	std::cin >> bit_field_len_bits;
+
+	unsigned int bit_field_len_ints = ceil(bit_field_len_bits / 8);
 
 	int option;
 	unsigned int ind, val;
-	BitField field1(bit_field_len);
-	BitField field2(bit_field_len);
-	BitField field_result(bit_field_len);
+	BitField field1(bit_field_len_ints);
+	BitField field2(bit_field_len_ints);
+	BitField field_result(bit_field_len_ints);
+
+	field1.used_bits = bit_field_len_bits;
+	field2.used_bits = bit_field_len_bits;
+	field_result.used_bits = bit_field_len_bits;
+
 	Interface();
 
 	do
@@ -74,6 +82,14 @@ int main()
 
 		case 4:
 
+			unsigned int inpt;
+
+			std::cout << "Input size of the second bitfield: ";
+			std::cin >> inpt;
+
+			field2.reserved_ints = ceil(inpt / 8);
+			field2.used_bits = inpt;
+
 			std::cout << "\nInput second bitfield: ";
 			InputRow(field2);
 
@@ -120,45 +136,48 @@ void Interface()
 void InputRow(BitField& obj)
 {
 	char* input;
-	input = new char[bit_field_len * 32];
+	input = new char[obj.reserved_ints * 32];
 	std::cin.clear();
 	std::cin >> input;
+	//obj.used_bits = 0;
 
-	for (int i = 0; i < (bit_field_len * 32); i++)
+	for (int i = 0; i < (obj.reserved_ints * 32); i++)
 	{
 		if (input[i] == '1')
 		{
 			obj.TurnOn(i);
-			obj.used_bits += 1;
+			//obj.used_bits += 1;
 		}
 		else if (input[i] == '0')
 		{
 			obj.TurnOff(i);
-			obj.used_bits += 1;
+			//obj.used_bits += 1;
 		}
 		else
 		{
 			break;
 		}
 	}
+
+	delete[] input;
 }
 
 void OutputRow(BitField& obj)
 {
-	int* output = new int[obj.reserved_ints + 1];
-	for (int i = 0; i <= obj.reserved_ints; i++)
+	int* output = new int[obj.used_bits];
+	for (int i = 0; i < obj.used_bits; i++)
 	{
 		output[i] = 0;
 	}
 
-	for (unsigned int i = 0; i <= obj.reserved_ints; i++)
+	for (unsigned int i = 0; i < obj.used_bits; i++)
 	{
 		output[i] = (obj.CheckState(i));
 	}
 
 	std::cout << "\n";
-	
-	for (int i = 0; i <= obj.reserved_ints; i++)
+
+	for (int i = 0; i < obj.used_bits; i++)
 	{
 		std::cout << output[i];
 	}
