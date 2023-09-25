@@ -2,22 +2,37 @@
 
 void BitField::TurnOn(unsigned int index)
 {
-	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(1, (index & 31)));
+	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(0, (index & 31)));
 }
 
 void BitField::TurnOff(unsigned int index)
 {
-	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(2, (index & 31)));
+	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(1, (index & 31)));
 }
 
 bool BitField::CheckState(unsigned int index)
 {
-	return ((bitarray[index >> 5] & BitMask(3, (index & 31))) != 0);
+	int op1;
+	int op2;
+	int op3;
+	int res1;
+	int	res2;
+	int res3;
+	bool res_final;
+
+	op1 = (index >> 5);
+	res1 = bitarray[op1];
+	op2 = (31 & index);
+	res2 = BitMask(2, op2);
+	res3 = res1 & res2;
+	res_final = res3 != 0;
+
+	return res_final;
 }
 
 unsigned int BitField::BitMask(unsigned int task, unsigned int location)
 {
-	unsigned int result = 3;
+	unsigned int result;
 
 	switch (task)
 	{

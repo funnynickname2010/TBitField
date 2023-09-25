@@ -2,24 +2,25 @@
 #include <string>
 #include <sstream>
 
-unsigned int BITFIELD_SIZE = 2;
-
 void CorrectInput(int left_index, int right_index);
 void Interface();
 void InputRow(BitField& obj);
 void OutputRow(BitField& obj);
+unsigned int bit_field_len = 30;
 
 int main()
 {
-	int option = 6;
+
+	int option;
 	unsigned int ind, val;
-	BitField field1(BITFIELD_SIZE);
-	BitField field2(BITFIELD_SIZE);
-	BitField field_result(BITFIELD_SIZE);
+	BitField field1(bit_field_len);
+	BitField field2(bit_field_len);
+	BitField field_result(bit_field_len);
+	Interface();
 
 	do
 	{
-		Interface();
+		std::cout << "\nChoose an option: ";
 		std::cin >> option;
 
 		switch (option)
@@ -35,7 +36,7 @@ int main()
 			{
 				std::cout << "Input index: ";
 				std::cin >> ind;
-			} while (ind > field1.reserved_ints || ind < 0);
+			} while (ind > (field1.reserved_ints * 32) || ind < 0);
 
 			do
 			{
@@ -65,7 +66,7 @@ int main()
 			{
 				std::cout << "Input index: ";
 				std::cin >> ind;
-			} while (ind > field1.reserved_ints || ind < 0);
+			} while (ind > (field1.reserved_ints * 32) || ind < 0);
 
 			std::cout << "Bit with an index " << ind << " equals to " << field1.CheckState(ind) << std::endl;
 
@@ -91,34 +92,46 @@ int main()
 			OutputRow(field_result);
 			break;
 
-		}
-	} while (option != 6 && option < 1 && option > 6);
+		case 6:
 
+			OutputRow(field1);
+
+		case 7:
+
+			std::cout << "\n";
+			Interface();
+		}
+
+	} while (option != 8 || option < 1 || option > 8);
 }
 
 void Interface()
 {
-	std::cout << "1. Input a bitfitfield as a row";
+	std::cout << "1. Input a bitfitfield as a row\n";
 	std::cout << "2. Change a single bit of a bitfield\n";
 	std::cout << "3. Check state of a bit\n";
 	std::cout << "4. Test | operator\n";
 	std::cout << "5. Test & operator\n";
-	std::cout << "6. Exit\n";
+	std::cout << "6. Print the bitfield\n";
+	std::cout << "7. Print menu\n";
+	std::cout << "8. Exit\n";
 }
 
 void InputRow(BitField& obj)
 {
-	std::string input;
-	std::getline(std::cin, input);
+	char* input;
+	input = new char[bit_field_len * 32];
+	std::cin.clear();
+	std::cin >> input;
 
-	for (int i = 0; i < input.size(); i++)
+	for (int i = 0; i < (bit_field_len * 32); i++)
 	{
-		if (input[i] == 1)
+		if (input[i] == '1')
 		{
 			obj.TurnOn(i);
 			obj.used_bits += 1;
 		}
-		else if (input[i] == 0)
+		else if (input[i] == '0')
 		{
 			obj.TurnOff(i);
 			obj.used_bits += 1;
@@ -132,12 +145,25 @@ void InputRow(BitField& obj)
 
 void OutputRow(BitField& obj)
 {
-	std::string output;
+	int* output = new int[obj.reserved_ints + 1];
+	for (int i = 0; i <= obj.reserved_ints; i++)
+	{
+		output[i] = 0;
+	}
 
-	for (unsigned int i = 0; i < obj.used_bits; i++)
+	for (unsigned int i = 0; i <= obj.reserved_ints; i++)
 	{
 		output[i] = (obj.CheckState(i));
 	}
 
-	std::cout << std::endl << output << std::endl;
+	std::cout << "\n";
+	
+	for (int i = 0; i <= obj.reserved_ints; i++)
+	{
+		std::cout << output[i];
+	}
+
+	std::cout << "\n";
+
+	delete[] output;
 }
