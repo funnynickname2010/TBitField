@@ -6,13 +6,23 @@ void CorrectInput(int left_index, int right_index);
 void Interface();
 void InputRow(BitField& obj);
 void OutputRow(BitField& obj);
+
+void UnsignedIntCorrectInput(unsigned int container, std::string str, bool repeat_condition);
+
+void UnsignedIntCorrectInput(unsigned int container, std::string str, bool repeat_condition)
+{
+	do {
+		std::cout << str;
+		std::cin >> container;
+	} while (repeat_condition);
+}
+
 unsigned int bit_field_len = 30;
 
 int main()
 {
 
 	int option;
-	unsigned int ind, val;
 	BitField field1(bit_field_len);
 	BitField field2(bit_field_len);
 	BitField field_result(bit_field_len);
@@ -31,47 +41,39 @@ int main()
 			break;
 
 		case 2:
+		{
+			unsigned int index, value;
 
-			do
-			{
-				std::cout << "Input index: ";
-				std::cin >> ind;
-			} while (ind > (field1.reserved_ints * 32) || ind < 0);
+			UnsignedIntCorrectInput(index, "\nInput index: ", (index > (field1.reserved_ints * 32) || (index < 0)));
 
-			do
-			{
-				std::cout << "Input value: ";
-				std::cin >> val;
-			} while (val != 0 && val != 1);
+			UnsignedIntCorrectInput(value, "\nInput value: ", (value != 0 && value != 1));
 
-			if (val == 0)
+			if (value == 0)
 			{
-				field1.TurnOff(ind);
+				field1.TurnOff(index);
 			}
-			else if (val == 1)
+			else if (value == 1)
 			{
-				field1.TurnOn(ind);
+				field1.TurnOn(index);
 			}
 
-			if (field1.used_bits <= ind)
+			if (field1.used_bits <= index)
 			{
-				field1.used_bits = ind + 1;
+				field1.used_bits = index + 1;
 			}
 
 			break;
-
+		}
 		case 3:
+		{
+			unsigned int index;
 
-			do
-			{
-				std::cout << "Input index: ";
-				std::cin >> ind;
-			} while (ind > (field1.reserved_ints * 32) || ind < 0);
+			UnsignedIntCorrectInput(index, "\nInput index: ", (index > (field1.reserved_ints * 32) || index < 0));
 
-			std::cout << "Bit with an index " << ind << " equals to " << field1.CheckState(ind) << std::endl;
+			std::cout << "Bit with an index " << index << " equals to " << field1.CheckState(index) << std::endl;
 
 			break;
-
+		}
 		case 4:
 
 			std::cout << "\nInput second bitfield: ";
