@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 
-void CorrectInput(int left_index, int right_index);
 void Interface();
 void InputRow(BitField& obj);
 void OutputRow(BitField& obj);
@@ -21,6 +20,11 @@ unsigned int bit_field_len = 30;
 
 int main()
 {
+	unsigned int bit_field_len_bits = 30;
+	std::cout << "Input size of the fields: ";
+	std::cin >> bit_field_len_bits;
+
+	unsigned int bit_field_len_ints = ceil(bit_field_len_bits / 8);
 
 	int option;
 	BitField field1(bit_field_len);
@@ -75,6 +79,14 @@ int main()
 			break;
 		}
 		case 4:
+
+			unsigned int inpt;
+
+			std::cout << "Input size of the second bitfield: ";
+			std::cin >> inpt;
+
+			field2.reserved_ints = ceil(inpt / 8);
+			field2.used_bits = inpt;
 
 			std::cout << "\nInput second bitfield: ";
 			InputRow(field2);
@@ -143,6 +155,8 @@ void InputRow(BitField& obj)
 			break;
 		}
 	}
+
+	delete[] input;
 }
 
 void OutputRow(BitField& obj)
