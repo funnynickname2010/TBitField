@@ -16,6 +16,7 @@ public:
 	void TurnOn(unsigned int index);
 	void TurnOff(unsigned int index);
 	bool CheckState(unsigned int index);
+	void ChangeSize(unsigned int size);
 
 	BitField& operator =(const BitField& obj2);
 	bool operator ==(const BitField& obj2);

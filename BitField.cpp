@@ -14,7 +14,6 @@ bool BitField::CheckState(unsigned int index)
 {
 	int op1;
 	int op2;
-	int op3;
 	int res1;
 	int	res2;
 	int res3;
@@ -223,4 +222,28 @@ BitField BitField::operator |(const BitField& obj2)
 	}
 
 	return result;
+}
+
+void BitField::ChangeSize(unsigned int size)
+{
+	unsigned int int_size = ((size >> 5) + 1);
+
+	if (reserved_ints < int_size)
+	{
+		BitField temp = *this;
+
+		bitarray = new unsigned int[int_size];
+		used_bits = size;
+		reserved_ints = int_size;
+
+		for (unsigned int i = 0; i < ((temp.used_bits >> 5) + 1); i++)
+		{
+			bitarray[i] = temp.bitarray[i];
+		}
+
+		for (unsigned int i = ((temp.used_bits >> 5) + 1); i < reserved_ints; i++)
+		{
+			bitarray[i] = 0;
+		}
+	}
 }
