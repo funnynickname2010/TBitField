@@ -5,14 +5,20 @@
 void InputRow(BitField& obj);
 void OutputRow(BitField& obj);
 
-void UnsignedIntCorrectInput(unsigned int& container, std::string str, unsigned int part_condition);
-
-void UnsignedIntCorrectInput(unsigned int& container, std::string str, unsigned int part_condition)
+void UnsignedIntCorrectInput(unsigned int& container, std::string str, int lower_bound, int upper_bound)
 {
 	do {
 		std::cout << str;
 		std::cin >> container;
-	} while ((container > part_condition) || (container < 0));
+	} while ((container > upper_bound) || (container < lower_bound));
+}
+
+void UnsignedIntCorrectInput(unsigned int& container, std::string str, int lower_bound, int upper_bound, int kstl)
+{
+	do {
+		std::cout << str;
+		std::cin >> container;
+	} while ((container > upper_bound) || (container != 0 && container != 1));
 }
 
 void if_field_isnt_initialized(bool* field_created_array, int index, BitField& bitfield_op)
@@ -59,7 +65,7 @@ int main()
 
 	do
 	{
-		std::cout << "\nChoose an option: ";
+		std::cout << "\n////////////////////////////CHOOSE AN OPTION: ";
 		std::cin >> option;
 
 		switch (option)
@@ -91,12 +97,15 @@ int main()
 
 			unsigned int index = 0;
 			unsigned int value = 0;
-
-			UnsignedIntCorrectInput(index, "\nInput index: ", (BitFieldArray[which_bitfield].reserved_ints * 32));
+			
+			unsigned int zero_temp = 0;
+			unsigned int two_temp = 0;
+			UnsignedIntCorrectInput(index, "\nInput index: ", 0, (BitFieldArray[which_bitfield].reserved_ints * 32));
 
 			value = !BitFieldArray[which_bitfield].CheckState(index);
 
-			//UnsignedIntCorrectInput(value, "\nInput value: ", (value != 0 && value != 1));
+			unsigned int temp_upper_bound_value = 2;
+			UnsignedIntCorrectInput(value, "\nInput value: ", -1, temp_upper_bound_value, 0);
 
 			if (value == 0)
 			{
@@ -127,7 +136,7 @@ int main()
 
 			unsigned int index = 0;
 
-			UnsignedIntCorrectInput(index, "\nInput index: ", BitFieldArray[which_bitfield].reserved_ints * 32);
+			UnsignedIntCorrectInput(index, "\nInput index: ", 0, BitFieldArray[which_bitfield].reserved_ints * 32);
 
 			std::cout << "Bit with an index " << index << " equals to " << BitFieldArray[which_bitfield].CheckState(index) << std::endl;
 
@@ -178,9 +187,10 @@ int main()
 		case 6:
 		{
 
-			int which_bitfield;
+			int which_bitfield = 0;
 
 			std::cout << "\nWhich bitfield do you want printed?\nA - 0\nB - 1\n";
+			std::cin.ignore();
 			std::cin >> which_bitfield;
 
 			if (field_initialized[which_bitfield])
@@ -213,6 +223,12 @@ void InputRow(BitField& obj)
 	input = new char[obj.reserved_ints * 32];
 	std::cin.clear();
 	std::cin >> input;
+	obj.used_bits = 0;
+
+	for (unsigned int i = 0; i < (obj.reserved_ints * 32); i++)
+	{
+		obj.TurnOff(i);
+	}
 
 	for (unsigned int i = 0; i < (obj.reserved_ints * 32); i++)
 	{
@@ -237,7 +253,7 @@ void InputRow(BitField& obj)
 
 void OutputRow(BitField& obj)
 {
-	int* output = new int[obj.used_bits];
+	int* output = new int[obj.reserved_ints * 32];
 
 	for (unsigned int i = 0; i < obj.used_bits; i++)
 	{
