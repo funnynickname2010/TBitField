@@ -129,9 +129,11 @@
   <ItemGroup>
     <ClCompile Include="BitField.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="TSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BitField.h" />
+    <ClInclude Include="TSet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
