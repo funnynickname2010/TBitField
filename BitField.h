@@ -7,16 +7,16 @@ class BitField
 {
 public:
 
-	int unsigned* bitarray;
-	int unsigned reserved_ints;
-	int unsigned used_bits;
+	unsigned int* bitarray;
+	size_t reserved_ints;
+	size_t used_bits;
 
-	unsigned int BitMask(unsigned int task, unsigned int location);
+	unsigned int BitMask(unsigned int task, size_t location);
 
-	void TurnOn(unsigned int index);
-	void TurnOff(unsigned int index);
-	bool CheckState(unsigned int index);
-	void ChangeSize(unsigned int size);
+	void TurnOn(size_t index);
+	void TurnOff(size_t index);
+	bool CheckState(size_t index);
+	void ChangeSize(size_t size);
 
 	BitField& operator =(const BitField& obj2);
 	bool operator ==(const BitField& obj2);
@@ -25,7 +25,7 @@ public:
 	BitField operator |(const BitField& obj2);
 
 	BitField(); //Make a constant
-	BitField(unsigned int& n);
+	BitField(size_t& n);
 	BitField(BitField& obj2);
 	~BitField();
 };
