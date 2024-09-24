@@ -56,6 +56,8 @@ int main()
 
 	bool field_initialized[2];
 
+	unsigned int temp_size = 0;
+
 	for (int i = 0; i < 2; i++)
 	{
 		field_initialized[i] = 0;
@@ -73,15 +75,22 @@ int main()
 		case 1:
 
 			int which_bitfield;
+			
 
 			std::cout << "\nDo you want to input bitfield A or bitfield B?\nA - 0\nB - 1\n";
 			std::cin >> which_bitfield;
 
-			if_field_isnt_initialized(field_initialized, which_bitfield, BitFieldArray[which_bitfield]);
+			
+			std::wcout << "Input size of the bitfield in bits: ";
+			std::wcin >> temp_size;
+
+
+			BitFieldArray[which_bitfield].ChangeSize(temp_size);
 
 			std::cout << "\nPlease input the bitfield: ";
 
 			InputRow(BitFieldArray[which_bitfield]);
+			field_initialized[which_bitfield] = 1;
 
 			break;
 
@@ -255,14 +264,14 @@ void OutputRow(BitField& obj)
 {
 	int* output = new int[obj.reserved_ints * 32];
 
-	for (unsigned int i = 0; i < obj.used_bits; i++)
+	for (unsigned int i = 0; i < (obj.reserved_ints * 32); i++)
 	{
 		output[i] = (obj.CheckState(i));
 	}
 
 	std::cout << "\n";
 	
-	for (unsigned int i = 0; i < obj.used_bits; i++)
+	for (unsigned int i = 0; i < (obj.reserved_ints * 32); i++)
 	{
 		std::cout << output[i];
 	}
