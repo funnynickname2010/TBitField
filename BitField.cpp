@@ -1,5 +1,21 @@
 #include "BitField.h"
 
+#ifdef DEFAULT_CONSTRUCTOR
+
+	BitField::BitField()
+	{
+		bitarray = new unsigned int[1];
+		used_bits = 0;
+		reserved_ints = 1;
+
+		for (size_t i = 0; i < reserved_ints; i++)
+		{
+			bitarray[i] = 0;
+		}
+	}
+
+#endif // DEFAULT_CONSTRUCTOR
+
 void BitField::TurnOn(size_t index)
 {
 	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(0, (index & 31)));
@@ -52,18 +68,6 @@ unsigned int BitField::BitMask(unsigned int task, size_t location)
 	}
 
 	return result;
-}
-
-BitField::BitField()
-{
-	bitarray = new unsigned int[1];
-	used_bits = 0;
-	reserved_ints = 1;
-
-	for (size_t i = 0; i < reserved_ints; i++)
-	{
-		bitarray[i] = 0;
-	}
 }
 
 BitField::BitField(size_t& n)

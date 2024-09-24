@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <math.h>
+#define DEFAULT_CONSTRUCTOR
 
 
 class BitField
@@ -24,8 +25,12 @@ public:
 	BitField operator &(const BitField& obj2);
 	BitField operator |(const BitField& obj2);
 
-	BitField(); //Make a constant
 	BitField(size_t& n);
 	BitField(BitField& obj2);
 	~BitField();
+
+#ifdef DEFAULT_CONSTRUCTOR
+	BitField()
+#endif // DEFAULT_CONSTRUCTOR
+
 };
