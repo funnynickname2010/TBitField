@@ -45,9 +45,9 @@ unsigned int BitField::BitMask(unsigned int task, unsigned int location)
 		result = ~(1 << location);
 		break;
 
-	case 2:
+	default:
 
-		result = 1 << location;
+		throw std::exception & e("Error. BitField::BitMask(...) incorrect parameter input.");
 		break;
 	}
 
@@ -230,20 +230,17 @@ void BitField::ChangeSize(unsigned int size)
 
 	if (reserved_ints < int_size)
 	{
-		BitField temp = *this;
+		BitField result(int_size);
+		result.used_bits = used_bits;
 
-		bitarray = new unsigned int[int_size];
-		used_bits = size;
-		reserved_ints = int_size;
-
-		for (unsigned int i = 0; i < ((temp.used_bits >> 5) + 1); i++)
+		for (size_t i = 0; i < ((used_bits >> 5) + 1); i++)
 		{
-			bitarray[i] = temp.bitarray[i];
+			result.bitarray[i] = bitarray[i];
 		}
 
-		for (unsigned int i = ((temp.used_bits >> 5) + 1); i < reserved_ints; i++)
-		{
-			bitarray[i] = 0;
-		}
+		delete[] this;
+
+		this = result;
+		reserved_ints = result.reserved_ints;
 	}
 }
