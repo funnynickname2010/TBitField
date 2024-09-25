@@ -7,6 +7,9 @@ void BitFieldRowInput(BitField& field);
 void BitFieldPrint(const BitField& field) const;
 
 template <typename T>
+void BitFieldNotInitialized(const T& which_bitfield) const;
+
+template <typename T>
 void Safecin(T& input_container);
 
 void MenuPrint()
@@ -51,8 +54,10 @@ int main()
 
 			bitfield_array[which_bitfield]->ChangeSize(bitfield_size);
 			BitFieldRowInput(bitfield_array[which_bitfield]);
+
+			initialization_flags[which_bitfield] = 1;
 		}
-			break;
+		break;
 
 		case 2:
 			//Changing a single bit of a bitfield
@@ -64,22 +69,30 @@ int main()
 			std::cout << "Which bitfield do you want to change a bit in? A = 0, B = 1: ";
 			Safecin(which_bitfield);
 
-			std::cout << "Please input the index of the bit: ";
-			Safecin(bit_index);
-
-			std::cout << "Please input the value of the bit: ";
-			Safecin(input_bit);
-
-			if (input_bit == 1) //If we want the value to be 1, then we need to invoke TurnOn(...) function
+			if (initialization_flags[which_bitfield])
 			{
-				bitfield_array[which_bitfield]->TurnOn(bit_index);
+
+				std::cout << "Please input the index of the bit: ";
+				Safecin(bit_index);
+
+				std::cout << "Please input the value of the bit: ";
+				Safecin(input_bit);
+
+				if (input_bit == 1) //If we want the value to be 1, then we need to invoke TurnOn(...) function
+				{
+					bitfield_array[which_bitfield]->TurnOn(bit_index);
+				}
+				else //If input_bit == 0, invoke TurnOff(...)
+				{
+					bitfield_array[which_bitfield]->TurnOff(bit_index);
+				}
 			}
-			else //If input_bit == 0, invoke TurnOff(...)
+			else //I really wanted to make it pretty, there's actually no need for that
 			{
-				bitfield_array[which_bitfield]->TurnOff(bit_index);
+				BitFieldNotInitialized(which_bitfield);
 			}
 		}
-			break;
+		break;
 
 		case 3:
 			//Check state of a bit
@@ -90,34 +103,76 @@ int main()
 			std::cout << "Which bitfield do you want to check a bit in? A = 0, B = 1: ";
 			Safecin(which_bitfield);
 
-			std::cout << "Please input the index of the bit: ";
-			Safecin(bit_index);
+			if (initialization_flags[which_bitfield])
+			{
+				std::cout << "Please input the index of the bit: ";
+				Safecin(bit_index);
 
-			std::cout << bitfield_array[which_bitfield]->CheckState(bit_index);
+				std::cout << bitfield_array[which_bitfield]->CheckState(bit_index);
+			}
+			else
+			{
+				BitFieldNotInitialized(which_bitfield);
+			}
 		}
-			break;
+		break;
 
 		case 4:
 			//Test | operator
-
-
-			break;
+		{
+			if (initialization_flags[0] && initialization_flags[1])
+			{
+				BitField bitfield_temp = (bitfield_array[0] | bitfield_array[1]);
+				BitFieldPrint(bitfield_temp);
+			}
+			else
+			{
+				if (!initialization_flags[0]) { BitFieldNotInitialized(0); }
+				if (!initialization_flags[1]) { BitFieldNotInitialized(1); }
+			}
+		}
+		break;
 
 		case 5:
 			//Test & operator
-
+		{
+			if (initialization_flags[0] && initialization_flags[1])
+			{
+				BitField bitfield_temp = (bitfield_array[0] & bitfield_array[1]);
+				BitFieldPrint(bitfield_temp);
+			}
+			else
+			{
+				if (!initialization_flags[0]) { BitFieldNotInitialized(0); }
+				if (!initialization_flags[1]) { BitFieldNotInitialized(1); }
+			}
+		}
 
 			break;
 
 		case 6:
 			//Print the bitfield
+		{
+			bool which_bitfield;
 
+			std::cout << "Which bitfield do you want to print? A = 0, B = 1: ";
+			Safecin(which_bitfield);
 
+			if (initialization_flags[which_bitfield])
+			{
+				BitFieldPrint(bitfield_array[which_bitfield]);
+			}
+			else
+			{
+				BitFieldNotInitialized(which_bitfield);
+			}
+		}
 			break;
 
 		case 7:
 			//Print menu
-
+			
+			MenuPrint();
 
 			break;
 
@@ -163,6 +218,30 @@ void BitFieldRowInput(BitField& field)
 	}
 
 	delete[] input_row;
+}
+
+void BitFieldPrint(const BitField& field) const
+{
+	size_t print_size = field.GetUsedBitSize();
+	bool* print_array = new bool[print_size];
+
+	for (size_t i = 0; i < print_size; i++)
+	{
+		print_array[i] = field.CheckState[i];
+	}
+
+	std::cout << print_array;
+
+	delete[] print_array;
+}
+
+template<typename T>
+void BitFieldNotInitialized(const T& which_bitfield) const
+{
+	std::cout << "Error: bitfield ";
+	if (which_bitfield == 0) { std::cout << "A "; }
+	else { std::cout << "B "; }
+	std::cout << "is not initialized!\n";
 }
 
 template<typename T>
