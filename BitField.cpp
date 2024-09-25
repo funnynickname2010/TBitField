@@ -16,17 +16,27 @@
 
 #endif // DEFAULT_CONSTRUCTOR
 
-void BitField::TurnOn(size_t index)
+	const size_t& BitField::GetReservedIntSize() const
+	{
+		return reserved_ints;
+	}
+
+	const size_t& BitField::GetUsedBitSize() const
+	{
+		return used_bits;
+	}
+
+	void BitField::TurnOn(const size_t index)
 {
 	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(0, (index & 31)));
 }
 
-void BitField::TurnOff(size_t index)
+void BitField::TurnOff(const size_t index)
 {
 	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(1, (index & 31)));
 }
 
-bool BitField::CheckState(size_t index)
+bool BitField::CheckState(const size_t index)
 {
 	int op1;
 	int op2;
@@ -45,7 +55,7 @@ bool BitField::CheckState(size_t index)
 	return res_final;
 }
 
-unsigned int BitField::BitMask(unsigned int task, size_t location)
+unsigned int BitField::BitMask(const unsigned int task, const size_t location)
 {
 	unsigned int result;
 
@@ -70,7 +80,7 @@ unsigned int BitField::BitMask(unsigned int task, size_t location)
 	return result;
 }
 
-BitField::BitField(size_t& n)
+BitField::BitField(const size_t& n)
 {
 	bitarray = new unsigned int[n];
 	used_bits = 0;
@@ -82,7 +92,7 @@ BitField::BitField(size_t& n)
 	}
 }
 
-BitField::BitField(BitField& obj2)
+BitField::BitField(const BitField& obj2)
 {
 	used_bits = obj2.used_bits;
 	reserved_ints = obj2.reserved_ints;
@@ -99,7 +109,7 @@ BitField::~BitField()
 	delete[] bitarray;
 }
 
-bool BitField::operator ==(const BitField& obj2)
+bool BitField::operator ==(const BitField& obj2) const
 {
 	bool result = 1;
 
@@ -143,7 +153,7 @@ BitField& BitField::operator =(const BitField& obj2)
 	return *this;
 }
 
-BitField BitField::operator &(const BitField& obj2)
+BitField BitField::operator &(const BitField& obj2) const
 {
 	unsigned int result_bitfield_size;
 	int smaller_bitfield_size;
@@ -178,7 +188,7 @@ BitField BitField::operator &(const BitField& obj2)
 	return result;
 }
 
-BitField BitField::operator |(const BitField& obj2)
+BitField BitField::operator |(const BitField& obj2) const
 {
 	unsigned int result_bitfield_size;
 	int smaller_bitfield_size;
@@ -228,14 +238,14 @@ BitField BitField::operator |(const BitField& obj2)
 	return result;
 }
 
-void BitField::ChangeSize(size_t size)
+void BitField::ChangeSize(const size_t size)
 {
 	size_t int_size = ((size >> 5) + 1);
+	result.used_bits = used_bits;
 
 	if (reserved_ints < int_size)
 	{
 		BitField result(int_size);
-		result.used_bits = used_bits;
 
 		for (size_t i = 0; i < ((used_bits >> 5) + 1); i++)
 		{
