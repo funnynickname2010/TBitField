@@ -1,32 +1,28 @@
 #include "BitField.h"
 
-#ifdef DEFAULT_CONSTRUCTOR
+BitField::BitField()
+{
+	bitarray = new unsigned int[1];
+	used_bits = 0;
+	reserved_ints = 1;
 
-	BitField::BitField()
+	for (size_t i = 0; i < reserved_ints; i++)
 	{
-		bitarray = new unsigned int[1];
-		used_bits = 0;
-		reserved_ints = 1;
-
-		for (size_t i = 0; i < reserved_ints; i++)
-		{
-			bitarray[i] = 0;
-		}
+		bitarray[i] = 0;
 	}
+}
 
-#endif // DEFAULT_CONSTRUCTOR
+const size_t& BitField::GetReservedIntSize() const
+{
+	return reserved_ints;
+}
 
-	const size_t& BitField::GetReservedIntSize() const
-	{
-		return reserved_ints;
-	}
+const size_t& BitField::GetUsedBitSize() const
+{
+	return used_bits;
+}
 
-	const size_t& BitField::GetUsedBitSize() const
-	{
-		return used_bits;
-	}
-
-	void BitField::TurnOn(const size_t index)
+void BitField::TurnOn(const size_t index)
 {
 	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(0, (index & 31)));
 }
@@ -36,7 +32,7 @@ void BitField::TurnOff(const size_t index)
 	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(1, (index & 31)));
 }
 
-bool BitField::CheckState(const size_t index)
+bool BitField::CheckState(const size_t index) const
 {
 	int op1;
 	int op2;
@@ -55,7 +51,7 @@ bool BitField::CheckState(const size_t index)
 	return res_final;
 }
 
-unsigned int BitField::BitMask(const unsigned int task, const size_t location)
+unsigned int BitField::BitMask(const unsigned int task, const size_t location) const
 {
 	unsigned int result;
 
@@ -73,7 +69,7 @@ unsigned int BitField::BitMask(const unsigned int task, const size_t location)
 
 	default:
 
-		throw std::exception & e("Error. BitField::BitMask(...) incorrect parameter input.");
+		throw std::invalid_argument("Error. BitField::BitMask(...) incorrect parameter input.");
 		break;
 	}
 
@@ -241,7 +237,6 @@ BitField BitField::operator |(const BitField& obj2) const
 void BitField::ChangeSize(const size_t size)
 {
 	size_t int_size = ((size >> 5) + 1);
-	result.used_bits = used_bits;
 
 	if (reserved_ints < int_size)
 	{
@@ -252,9 +247,11 @@ void BitField::ChangeSize(const size_t size)
 			result.bitarray[i] = bitarray[i];
 		}
 
-		delete[] this;
+		delete[] bitarray;
 
-		this = result;
+		bitarray = result.bitarray;
 		reserved_ints = result.reserved_ints;
 	}
+
+	used_bits = size;
 }

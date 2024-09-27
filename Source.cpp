@@ -1,13 +1,14 @@
 #include "BitField.h"
 #include <string>
 #include <sstream>
+#include <vector>
 
-void MenuInput(const int& option) const;
+void MenuInput(int& option);
 void BitFieldRowInput(BitField& field);
-void BitFieldPrint(const BitField& field) const;
+void BitFieldPrint(const BitField& field);
 
 template <typename T>
-void BitFieldNotInitialized(const T& which_bitfield) const;
+void BitFieldNotInitialized(const T& which_bitfield);
 
 template <typename T>
 void Safecin(T& input_container);
@@ -29,8 +30,8 @@ int main()
 	int menu_option = 0;
 	int exit_option = 8;
 
-	BitField* bitfield_array[2];
-	bool* initialization_flags[2];
+	BitField bitfield_array[2];
+	bool initialization_flags[2];
 
 	std::fill_n(initialization_flags, 2, 0);
 
@@ -38,12 +39,14 @@ int main()
 
 	while (menu_option != exit_option)
 	{
+		std::cin >> menu_option; 
+
 		switch (menu_option)
 		{
 		case 1:
 			//Inputting bitfield as a row
 		{
-			bool which_bitfield;
+			size_t which_bitfield;
 			size_t bitfield_size = 0;
 
 			std::cout << "Which bitfield do you want to input? A = 0, B = 1: ";
@@ -52,7 +55,7 @@ int main()
 			std::cout << "Please input the size of the bitfield: ";
 			Safecin(bitfield_size);
 
-			bitfield_array[which_bitfield]->ChangeSize(bitfield_size);
+			bitfield_array[which_bitfield].ChangeSize(bitfield_size);
 			BitFieldRowInput(bitfield_array[which_bitfield]);
 
 			initialization_flags[which_bitfield] = 1;
@@ -62,7 +65,7 @@ int main()
 		case 2:
 			//Changing a single bit of a bitfield
 		{
-			bool which_bitfield;
+			size_t which_bitfield;
 			size_t bit_index;
 			bool input_bit = 0;
 
@@ -80,11 +83,11 @@ int main()
 
 				if (input_bit == 1) //If we want the value to be 1, then we need to invoke TurnOn(...) function
 				{
-					bitfield_array[which_bitfield]->TurnOn(bit_index);
+					bitfield_array[which_bitfield].TurnOn(bit_index);
 				}
 				else //If input_bit == 0, invoke TurnOff(...)
 				{
-					bitfield_array[which_bitfield]->TurnOff(bit_index);
+					bitfield_array[which_bitfield].TurnOff(bit_index);
 				}
 			}
 			else //I really wanted to make it pretty, there's actually no need for that
@@ -97,7 +100,7 @@ int main()
 		case 3:
 			//Check state of a bit
 		{
-			bool which_bitfield;
+			size_t which_bitfield;
 			size_t bit_index;
 
 			std::cout << "Which bitfield do you want to check a bit in? A = 0, B = 1: ";
@@ -108,7 +111,7 @@ int main()
 				std::cout << "Please input the index of the bit: ";
 				Safecin(bit_index);
 
-				std::cout << bitfield_array[which_bitfield]->CheckState(bit_index);
+				std::cout << bitfield_array[which_bitfield].CheckState(bit_index);
 			}
 			else
 			{
@@ -188,12 +191,9 @@ int main()
 
 		}
 	}
-
-	delete[] bitfield_array;
-	delete[] initalization_flags;
 }
 
-void MenuInput(const int& option) const
+void MenuInput(int& option)
 {
 	std::cout << "Please choose an option: ";
 	std::cin >> option;
@@ -202,32 +202,42 @@ void MenuInput(const int& option) const
 
 void BitFieldRowInput(BitField& field)
 {
-	bool* input_row = new bool[field.used_bits];
-	std::fill_n(input_row, field.used_bits, 0);
+	size_t size_bits = field.GetUsedBitSize();
+	bool* input_row = new bool[size_bits];
+
+	std::fill_n(input_row, size_bits, 0);
 
 	std::cout << "Please input the bitfield as a row: ";
 
-	Safecin(input_row);
+	for (size_t i = 0; i < size_bits; i++)
+	{
+		std::cin >> input_row[i];
+
+		if (std::cin.fail())
+		{
+			std::cin.ignore();
+			std::cin.clear();
+			break;
+		}
+	}
 	
-	for (size_t i = 0; i < field.used_bits; i++) //This part of the function is slow
+	for (size_t i = 0; i < size_bits; i++) //This part of the function is slow
 	{
 		if (input_row[i]) //== 1 (just for clarity)
 		{
 			field.TurnOn(i);
 		}
 	}
-
-	delete[] input_row;
 }
 
-void BitFieldPrint(const BitField& field) const
+void BitFieldPrint(const BitField& field)
 {
 	size_t print_size = field.GetUsedBitSize();
 	bool* print_array = new bool[print_size];
 
 	for (size_t i = 0; i < print_size; i++)
 	{
-		print_array[i] = field.CheckState[i];
+		print_array[i] = field.CheckState(i);
 	}
 
 	std::cout << print_array;
@@ -236,7 +246,7 @@ void BitFieldPrint(const BitField& field) const
 }
 
 template<typename T>
-void BitFieldNotInitialized(const T& which_bitfield) const
+void BitFieldNotInitialized(const T& which_bitfield)
 {
 	std::cout << "Error: bitfield ";
 	if (which_bitfield == 0) { std::cout << "A "; }
@@ -249,13 +259,13 @@ void Safecin(T& input_container)
 {
 	do
 	{
-		std::cin >> input_container;
-
 		if (std::cin.fail())
 		{
 			std::cin.clear();
 			std::cin.ignore('\n');
 			std::cout << "Input error! Please try again\n";
 		}
+		std::cin >> input_container;
+
 	} while (std::cin.fail());
 }
