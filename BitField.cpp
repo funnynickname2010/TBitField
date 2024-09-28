@@ -1,15 +1,12 @@
 #include "BitField.h"
 
-BitField::BitField()
+BitField::BitField() //Why does it give of a failure if I don't initialize the second field? Optimization?
 {
-	bitarray = new unsigned int[1];
+	bitarray = new unsigned int[2]; //So it doesn't count as an array if it's just one element? What?
 	used_bits = 0;
 	reserved_ints = 1;
 
-	for (size_t i = 0; i < reserved_ints; i++)
-	{
-		bitarray[i] = 0;
-	}
+	bitarray[0] = 0;
 }
 
 const size_t& BitField::GetReservedIntSize() const
@@ -73,10 +70,7 @@ BitField::BitField(const size_t& n)
 	used_bits = 0;
 	reserved_ints = n;
 
-	for (size_t i = 0; i < reserved_ints; i++)
-	{
-		bitarray[i] = 0;
-	}
+	std::fill_n(bitarray, reserved_ints, 0);
 }
 
 BitField::BitField(const BitField& obj2)
@@ -225,15 +219,16 @@ BitField BitField::operator |(const BitField& obj2) const
 	return result;
 }
 
-void BitField::ChangeSize(const size_t size)
+void BitField::ChangeSize(const size_t bit_size)
 {
-	size_t int_size = ((size >> 5) + 1);
+	size_t int_size = ((bit_size + 31) >> 5);
 
 	if (reserved_ints < int_size)
 	{
 		BitField result(int_size);
+		std::fill_n(result.bitarray, int_size, 0);
 
-		for (size_t i = 0; i < ((used_bits >> 5) + 1); i++)
+		for (size_t i = 0; i < ((used_bits + 31) >> 5); i++)
 		{
 			result.bitarray[i] = bitarray[i];
 		}
@@ -241,8 +236,8 @@ void BitField::ChangeSize(const size_t size)
 		delete[] bitarray;
 
 		bitarray = result.bitarray;
-		reserved_ints = result.reserved_ints;
+		reserved_ints = int_size;
 	}
 
-	used_bits = size;
+	used_bits = bit_size;
 }

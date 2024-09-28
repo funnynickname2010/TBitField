@@ -8,7 +8,7 @@ class BitField
 	size_t reserved_ints;
 	size_t used_bits;
 
-	unsigned int BitMask(const unsigned int task, const size_t location) const;
+	unsigned int BitMask(const unsigned int task, const unsigned int location) const;
 
 public:
 

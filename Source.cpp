@@ -1,7 +1,7 @@
 #include "BitField.h"
 #include <string>
 #include <sstream>
-#include <vector>
+#include <math.h>
 
 void MenuInput(int& option);
 void BitFieldRowInput(BitField& field);
@@ -30,16 +30,16 @@ int main()
 	int menu_option = 0;
 	int exit_option = 8;
 
-	BitField bitfield_array[2];
-	bool initialization_flags[2];
+	BitField bfield_1(3), bfield_2(3);
 
-	std::fill_n(initialization_flags, 2, 0);
+	BitField bitfield_array[2] = {bfield_1, bfield_2};
+	bool initialization_flags[2] = {0, 0};
 
 	MenuPrint();
 
 	while (menu_option != exit_option)
 	{
-		std::cin >> menu_option; 
+		MenuInput(menu_option);
 
 		switch (menu_option)
 		{
@@ -191,61 +191,67 @@ int main()
 
 		}
 	}
+
 }
 
 void MenuInput(int& option)
 {
 	std::cout << "Please choose an option: ";
 	std::cin >> option;
-	std::cout << std::endl;
 }
 
 void BitFieldRowInput(BitField& field) //Nedds complete rehaul
 {
-	size_t size_bits = field.GetUsedBitSize();
-	bool* input_row = new bool[size_bits];
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-	std::fill_n(input_row, size_bits, 0);
+	std::string input_string;
+	size_t bit_size = field.GetUsedBitSize();
 
-	std::cout << "Please input the bitfield as a row: ";
+	std::cout << "Please input the bitfield: ";
 
-	for (size_t i = 0; i < size_bits; i++)
-	{
-		std::cin >> input_row[i];
-
-		if (std::cin.fail())
-		{
-			std::cin.ignore();
-			std::cin.clear();
-			break;
-		}
-	}
+	std::getline(std::cin, input_string, '\n');
 	
-	for (size_t i = 0; i < size_bits; i++) //This part of the function is slow
+	for (size_t i = 0; i < bit_size; i++)
 	{
-		if (input_row[i]) //== 1 (just for clarity)
+		if (input_string[i] == '1')
 		{
 			field.TurnOn(i);
 		}
+		else if (input_string[i] == '0')
+		{
+			field.TurnOff(i);
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (std::cin.fail())
+	{
+		std::cin.ignore();
+		std::cin.clear();
 	}
 }
 
 void BitFieldPrint(const BitField& field)
 {
-	size_t print_size = field.GetUsedBitSize();
-	bool* print_array = new bool[print_size];
+	std::string output_str = "";
+	size_t bit_size = field.GetUsedBitSize();
 
-	for (size_t i = 0; i < print_size; i++)
+	for (size_t i = 0; i < bit_size; i++)
 	{
-		print_array[i] = field.CheckState(i);
+		if (field.CheckState(i))
+		{
+			output_str.append("1");
+		}
+		else
+		{
+			output_str.append("0");
+		}
 	}
 
-	for (size_t i = 0; i < print_size; i++)
-	{
-		std::cout << print_array[i];
-	}
-
-	delete[] print_array;
+	std::cout << output_str << std::endl;
 }
 
 template<typename T>
