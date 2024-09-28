@@ -21,15 +21,9 @@
     <ClCompile Include="BitField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TSet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BitField.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

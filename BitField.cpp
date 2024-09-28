@@ -1,32 +1,28 @@
 #include "BitField.h"
 
-#ifdef DEFAULT_CONSTRUCTOR
+BitField::BitField()
+{
+	bitarray = new unsigned int[1];
+	used_bits = 0;
+	reserved_ints = 1;
 
-	BitField::BitField()
+	for (size_t i = 0; i < reserved_ints; i++)
 	{
-		bitarray = new unsigned int[1];
-		used_bits = 0;
-		reserved_ints = 1;
-
-		for (size_t i = 0; i < reserved_ints; i++)
-		{
-			bitarray[i] = 0;
-		}
+		bitarray[i] = 0;
 	}
+}
 
-#endif // DEFAULT_CONSTRUCTOR
+const size_t& BitField::GetReservedIntSize() const
+{
+	return reserved_ints;
+}
 
-	const size_t& BitField::GetReservedIntSize() const
-	{
-		return reserved_ints;
-	}
+const size_t& BitField::GetUsedBitSize() const
+{
+	return used_bits;
+}
 
-	const size_t& BitField::GetUsedBitSize() const
-	{
-		return used_bits;
-	}
-
-	void BitField::TurnOn(const size_t index)
+void BitField::TurnOn(const size_t index)
 {
 	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(0, (index & 31)));
 }
@@ -66,7 +62,7 @@ unsigned int BitField::BitMask(const unsigned int task, const size_t location) c
 
 	default:
 
-		throw (std::invalid_argument("Error. BitField::BitMask(...) incorrect parameter input."));
+		throw std::invalid_argument("Error. BitField::BitMask(...) incorrect parameter input.");
 		break;
 	}
 
@@ -243,13 +239,12 @@ void BitField::ChangeSize(const size_t size)
 		{
 			result.bitarray[i] = bitarray[i];
 		}
-		
-		result.used_bits = size;
 
-		*this = result; //This is double copying, but I need move semantics otherwise, we haven't learned that yet and I'm kinda tired, so that will do for now
+		delete[] bitarray;
+
+		bitarray = result.bitarray;
+		reserved_ints = result.reserved_ints;
 	}
-	else
-	{
-		used_bits = size;
-	}
+
+	used_bits = size;
 }

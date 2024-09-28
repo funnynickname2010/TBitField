@@ -2,7 +2,6 @@
 #include <iostream>
 #include <math.h>
 
-
 class BitField
 {
 	unsigned int* bitarray;
@@ -27,8 +26,9 @@ public:
 	BitField operator &(const BitField& obj2) const;
 	BitField operator |(const BitField& obj2) const;
 
+	BitField();
 	BitField(const size_t& n);
 	BitField(const BitField& obj2);
 	~BitField();
-	BitField();
 };
+

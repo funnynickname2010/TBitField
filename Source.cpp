@@ -1,6 +1,7 @@
 #include "BitField.h"
 #include <string>
 #include <sstream>
+#include <vector>
 
 void MenuInput(int& option);
 void BitFieldRowInput(BitField& field);
@@ -38,12 +39,14 @@ int main()
 
 	while (menu_option != exit_option)
 	{
+		std::cin >> menu_option; 
+
 		switch (menu_option)
 		{
 		case 1:
 			//Inputting bitfield as a row
 		{
-			bool which_bitfield;
+			size_t which_bitfield;
 			size_t bitfield_size = 0;
 
 			std::cout << "Which bitfield do you want to input? A = 0, B = 1: ";
@@ -62,7 +65,7 @@ int main()
 		case 2:
 			//Changing a single bit of a bitfield
 		{
-			bool which_bitfield;
+			size_t which_bitfield;
 			size_t bit_index;
 			bool input_bit = 0;
 
@@ -97,7 +100,7 @@ int main()
 		case 3:
 			//Check state of a bit
 		{
-			bool which_bitfield;
+			size_t which_bitfield;
 			size_t bit_index;
 
 			std::cout << "Which bitfield do you want to check a bit in? A = 0, B = 1: ";
@@ -199,22 +202,32 @@ void MenuInput(int& option)
 
 void BitFieldRowInput(BitField& field)
 {
-	bool* input_row = new bool[field.GetUsedBitSize()];
-	std::fill_n(input_row, field.GetUsedBitSize(), 0);
+	size_t size_bits = field.GetUsedBitSize();
+	bool* input_row = new bool[size_bits];
+
+	std::fill_n(input_row, size_bits, 0);
 
 	std::cout << "Please input the bitfield as a row: ";
 
-	Safecin(input_row);
+	for (size_t i = 0; i < size_bits; i++)
+	{
+		std::cin >> input_row[i];
+
+		if (std::cin.fail())
+		{
+			std::cin.ignore();
+			std::cin.clear();
+			break;
+		}
+	}
 	
-	for (size_t i = 0; i < field.GetUsedBitSize(); i++) //This part of the function is slow
+	for (size_t i = 0; i < size_bits; i++) //This part of the function is slow
 	{
 		if (input_row[i]) //== 1 (just for clarity)
 		{
 			field.TurnOn(i);
 		}
 	}
-
-	delete[] input_row;
 }
 
 void BitFieldPrint(const BitField& field)
@@ -224,7 +237,7 @@ void BitFieldPrint(const BitField& field)
 
 	for (size_t i = 0; i < print_size; i++)
 	{
-		print_array[i] = field.CheckState[i];
+		print_array[i] = field.CheckState(i);
 	}
 
 	std::cout << print_array;
@@ -246,13 +259,13 @@ void Safecin(T& input_container)
 {
 	do
 	{
-		std::cin >> input_container;
-
 		if (std::cin.fail())
 		{
 			std::cin.clear();
 			std::cin.ignore('\n');
 			std::cout << "Input error! Please try again\n";
 		}
+		std::cin >> input_container;
+
 	} while (std::cin.fail());
 }
