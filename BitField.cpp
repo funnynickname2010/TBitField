@@ -32,19 +32,17 @@ void BitField::TurnOff(const size_t index)
 	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(1, (index & 31)));
 }
 
-bool BitField::CheckState(const size_t index) const
+bool BitField::CheckState(const unsigned int input_bit_index) const
 {
-	size_t op1 = (index >> 5);
-	size_t op2 = (31 & index);
-	int res1 = bitarray[op1];
-	int	res2 = BitMask(2, op2);
-	int res3 = (res1 & res2);
-	bool res_final = (res3 != 0);
+	unsigned int int_index = ((input_bit_index + 31) >> 5); //Calculating which int we need
+	unsigned int bit_index = (31 & input_bit_index); //Calculating which bit we need
+	unsigned int bmask = BitMask(0, bit_index); //Creating the bit mask, it has every bit except bit_index equal to 0.
+	unsigned int bmask_and_int_result = (bmask & bitarray[int_index]); //Using bit multiplication & to get either 0...010...0 or 0...0.
 
-	return res_final;
+	return (bmask_and_int_result != 0);
 }
 
-unsigned int BitField::BitMask(const unsigned int task, const size_t location) const
+unsigned int BitField::BitMask(const unsigned int task, const unsigned int location) const
 {
 	unsigned int result;
 
@@ -52,7 +50,7 @@ unsigned int BitField::BitMask(const unsigned int task, const size_t location) c
 	{
 	case 0:
 
-		result = 1 << location;
+		result = (1 << location);
 		break;
 
 	case 1:

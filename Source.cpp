@@ -200,7 +200,7 @@ void MenuInput(int& option)
 	std::cout << std::endl;
 }
 
-void BitFieldRowInput(BitField& field)
+void BitFieldRowInput(BitField& field) //Nedds complete rehaul
 {
 	size_t size_bits = field.GetUsedBitSize();
 	bool* input_row = new bool[size_bits];
@@ -240,7 +240,10 @@ void BitFieldPrint(const BitField& field)
 		print_array[i] = field.CheckState(i);
 	}
 
-	std::cout << print_array;
+	for (size_t i = 0; i < print_size; i++)
+	{
+		std::cout << print_array[i];
+	}
 
 	delete[] print_array;
 }
