@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <math.h>
-#define DEFAULT_CONSTRUCTOR
 
 
 class BitField
@@ -10,7 +9,7 @@ class BitField
 	size_t reserved_ints;
 	size_t used_bits;
 
-	unsigned int BitMask(const unsigned int task, const size_t location);
+	unsigned int BitMask(const unsigned int task, const size_t location) const;
 
 public:
 
@@ -31,9 +30,5 @@ public:
 	BitField(const size_t& n);
 	BitField(const BitField& obj2);
 	~BitField();
-
-#ifdef DEFAULT_CONSTRUCTOR
-	BitField()
-#endif // DEFAULT_CONSTRUCTOR
-
+	BitField();
 };

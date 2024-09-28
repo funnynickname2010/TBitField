@@ -36,26 +36,19 @@ void BitField::TurnOff(const size_t index)
 	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(1, (index & 31)));
 }
 
-bool BitField::CheckState(const size_t index)
+bool BitField::CheckState(const size_t index) const
 {
-	int op1;
-	int op2;
-	int res1;
-	int	res2;
-	int res3;
-	bool res_final;
-
-	op1 = (index >> 5);
-	res1 = bitarray[op1];
-	op2 = (31 & index);
-	res2 = BitMask(2, op2);
-	res3 = res1 & res2;
-	res_final = res3 != 0;
+	size_t op1 = (index >> 5);
+	size_t op2 = (31 & index);
+	int res1 = bitarray[op1];
+	int	res2 = BitMask(2, op2);
+	int res3 = (res1 & res2);
+	bool res_final = (res3 != 0);
 
 	return res_final;
 }
 
-unsigned int BitField::BitMask(const unsigned int task, const size_t location)
+unsigned int BitField::BitMask(const unsigned int task, const size_t location) const
 {
 	unsigned int result;
 
@@ -73,7 +66,7 @@ unsigned int BitField::BitMask(const unsigned int task, const size_t location)
 
 	default:
 
-		throw std::exception & e("Error. BitField::BitMask(...) incorrect parameter input.");
+		throw (std::invalid_argument("Error. BitField::BitMask(...) incorrect parameter input."));
 		break;
 	}
 
@@ -241,7 +234,6 @@ BitField BitField::operator |(const BitField& obj2) const
 void BitField::ChangeSize(const size_t size)
 {
 	size_t int_size = ((size >> 5) + 1);
-	result.used_bits = used_bits;
 
 	if (reserved_ints < int_size)
 	{
@@ -251,10 +243,13 @@ void BitField::ChangeSize(const size_t size)
 		{
 			result.bitarray[i] = bitarray[i];
 		}
+		
+		result.used_bits = size;
 
-		delete[] this;
-
-		this = result;
-		reserved_ints = result.reserved_ints;
+		*this = result; //This is double copying, but I need move semantics otherwise, we haven't learned that yet and I'm kinda tired, so that will do for now
+	}
+	else
+	{
+		used_bits = size;
 	}
 }
