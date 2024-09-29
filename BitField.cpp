@@ -226,7 +226,7 @@ void BitField::ChangeSize(const size_t bit_size)
 	if (reserved_ints < int_size)
 	{
 		BitField result(int_size);
-		std::fill_n(result.bitarray, int_size, 0);
+		std::fill_n(result.bitarray, int_size, bool(0));
 
 		for (size_t i = 0; i < ((used_bits + 31) >> 5); i++)
 		{

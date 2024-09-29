@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <math.h>
+#include <vector>
 
 void MenuInput(int& option);
 void BitFieldRowInput(BitField& field);
@@ -204,14 +205,22 @@ void BitFieldRowInput(BitField& field) //Nedds complete rehaul
 {
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-	std::string input_string;
 	size_t bit_size = field.GetUsedBitSize();
+	std::string input_string = "";
+	std::string temp_string = "";
+	input_string.resize(bit_size, '0');
+
+	std::cout << "String size: " << input_string.size() << "\t" << input_string << std::endl;
 
 	std::cout << "Please input the bitfield: ";
 
-	std::getline(std::cin, input_string, '\n');
+	std::getline(std::cin, temp_string);
+	for (size_t j = 0; j < temp_string.size(); j++)
+	{
+		input_string[j] = temp_string[j];
+	}
 	
-	for (size_t i = 0; i < bit_size; i++)
+	for (size_t i = 5; i < bit_size; i++)
 	{
 		if (input_string[i] == '1')
 		{
