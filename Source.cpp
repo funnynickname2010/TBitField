@@ -31,7 +31,7 @@ int main()
 	int menu_option = 0;
 	int exit_option = 8;
 
-	BitField bfield_1(3), bfield_2(3);
+	BitField bfield_1(32), bfield_2(32);
 
 	BitField bitfield_array[2] = {bfield_1, bfield_2};
 	bool initialization_flags[2] = {0, 0};
@@ -67,7 +67,7 @@ int main()
 			//Changing a single bit of a bitfield
 		{
 			size_t which_bitfield;
-			size_t bit_index;
+			unsigned int bit_index;
 			bool input_bit = 0;
 
 			std::cout << "Which bitfield do you want to change a bit in? A = 0, B = 1: ";
@@ -209,18 +209,20 @@ void BitFieldRowInput(BitField& field) //Nedds complete rehaul
 	std::string input_string = "";
 	std::string temp_string = "";
 	input_string.resize(bit_size, '0');
+	temp_string.resize(bit_size, '0');
 
 	std::cout << "String size: " << input_string.size() << "\t" << input_string << std::endl;
 
 	std::cout << "Please input the bitfield: ";
 
 	std::getline(std::cin, temp_string);
+
 	for (size_t j = 0; j < temp_string.size(); j++)
 	{
 		input_string[j] = temp_string[j];
 	}
 	
-	for (size_t i = 5; i < bit_size; i++)
+	for (size_t i = 0; i < bit_size; i++)
 	{
 		if (input_string[i] == '1')
 		{

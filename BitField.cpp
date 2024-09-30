@@ -7,6 +7,7 @@ BitField::BitField() //Why does it give of a failure if I don't initialize the s
 	reserved_ints = 1;
 
 	bitarray[0] = 0;
+	bitarray[1] = 0;
 }
 
 const size_t& BitField::GetReservedIntSize() const
@@ -19,24 +20,23 @@ const size_t& BitField::GetUsedBitSize() const
 	return used_bits;
 }
 
-void BitField::TurnOn(const size_t index)
+void BitField::TurnOn(const unsigned int index)
 {
-	bitarray[index >> 5] = (bitarray[index >> 5] | BitMask(0, (index & 31)));
+	bitarray[this->IntIndex(index)] = (bitarray[this->IntIndex(index)] | BitMask(0, (index & 31)));
 }
 
-void BitField::TurnOff(const size_t index)
+void BitField::TurnOff(const unsigned int index)
 {
-	bitarray[index >> 5] = (bitarray[index >> 5] & BitMask(1, (index & 31)));
+	bitarray[this->IntIndex(index)] = (bitarray[this->IntIndex(index)] & BitMask(1, (index & 31)));
 }
 
-bool BitField::CheckState(const unsigned int input_bit_index) const
+bool BitField::CheckState(const unsigned int overall_bit_index) const
 {
-	unsigned int int_index = ((input_bit_index + 31) >> 5); //Calculating which int we need
-	unsigned int bit_index = (31 & input_bit_index); //Calculating which bit we need
-	unsigned int bmask = BitMask(0, bit_index); //Creating the bit mask, it has every bit except bit_index equal to 0.
-	unsigned int bmask_and_int_result = (bmask & bitarray[int_index]); //Using bit multiplication & to get either 0...010...0 or 0...0.
+	unsigned int real_bit_index = (overall_bit_index & 31);
+	unsigned int bmask = BitMask(0, real_bit_index); //Creating the bit mask, it has every bit except bit_index equal to 0.
+	//Using bit multiplication & to get either 0...010...0 or 0...0.
 
-	return (bmask_and_int_result != 0);
+	return !((bmask & bitarray[this->IntIndex(overall_bit_index)]) == 0);
 }
 
 unsigned int BitField::BitMask(const unsigned int task, const unsigned int location) const
@@ -64,11 +64,16 @@ unsigned int BitField::BitMask(const unsigned int task, const unsigned int locat
 	return result;
 }
 
+size_t BitField::IntIndex(const unsigned int bit_index) const
+{
+	return (bit_index >> 5);
+}
+
 BitField::BitField(const size_t& n)
 {
-	bitarray = new unsigned int[n];
-	used_bits = 0;
-	reserved_ints = n;
+	used_bits = n;
+	reserved_ints = this->IntIndex(n);
+	bitarray = new unsigned int[reserved_ints];
 
 	std::fill_n(bitarray, reserved_ints, 0);
 }
@@ -221,14 +226,14 @@ BitField BitField::operator |(const BitField& obj2) const
 
 void BitField::ChangeSize(const size_t bit_size)
 {
-	size_t int_size = ((bit_size + 31) >> 5);
+	size_t int_size = this->IntIndex(bit_size);
 
 	if (reserved_ints < int_size)
 	{
-		BitField result(int_size);
-		std::fill_n(result.bitarray, int_size, bool(0));
+		BitField result(bit_size);
+		std::fill_n(result.bitarray, result.reserved_ints, unsigned int(0));
 
-		for (size_t i = 0; i < ((used_bits + 31) >> 5); i++)
+		for (size_t i = 0; i < reserved_ints; i++)
 		{
 			result.bitarray[i] = bitarray[i];
 		}
@@ -236,7 +241,7 @@ void BitField::ChangeSize(const size_t bit_size)
 		delete[] bitarray;
 
 		bitarray = result.bitarray;
-		reserved_ints = int_size;
+		reserved_ints = result.reserved_ints;
 	}
 
 	used_bits = bit_size;
