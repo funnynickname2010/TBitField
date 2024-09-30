@@ -3,31 +3,28 @@
 #include <math.h>
 
 class BitField
-{
-	unsigned int* bitarray;
-	size_t reserved_ints;
-	size_t used_bits;
+{	unsigned int* pmem_;
+	unsigned int memSize_;
+	unsigned int bitSize_;
 
-	unsigned int BitMask(const unsigned int task, const unsigned int location) const;
-	size_t IntIndex(const unsigned int bit_index) const;
+	unsigned int getIntIndex(const unsigned int bitIndex_) const;
+	unsigned int bitMask(const unsigned int location) const;
 
 public:
 
-	const size_t& GetReservedIntSize() const;
-	const size_t& GetUsedBitSize() const;
+	size_t getMemSize() const;
+	size_t getBitSize() const;
+	bool getBitState(const unsigned int bitIndex_) const;
 
-	void TurnOn(const unsigned int index);
-	void TurnOff(const unsigned int index);
-	bool CheckState(const unsigned int overall_bit_index) const;
-	void ChangeSize(const size_t size);
+	void setBitTrue(const size_t index);
+	void setBitFalse (const size_t index);
+	void resize(const size_t size);
 
 	BitField& operator =(const BitField& obj2);
 	bool operator ==(const BitField& obj2) const;
-
 	BitField operator &(const BitField& obj2) const;
 	BitField operator |(const BitField& obj2) const;
 
-	BitField();
 	BitField(const size_t& n);
 	BitField(const BitField& obj2);
 	~BitField();
