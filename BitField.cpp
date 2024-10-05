@@ -31,19 +31,29 @@ bool BitField::getBitState(const unsigned int bitIndex_) const
         }
     }
     else {
-        throw std::invalid_argument("Error: bitIndex_ out of range");
+        throw std::out_of_range("BitField::getBitState error: bitIndex_ out of range");
     }
     return result;
 }
 
 void BitField::setBitTrue(const unsigned int index)
 {
-    pmem_[this->getIntIndex(index)] | this->bitMask(index);
+    if (index < bitSize_) {
+        pmem_[this->getIntIndex(index)] | this->bitMask(index)
+    }
+    else {
+        throw std::out_of_range("BitField::setBitTrue error: index >= bitSize_");
+    }
 }
 
 void BitField::setBitFalse(const unsigned int index)
 {
-    pmem_[this->getIntIndex(index)] & ~(this->bitMask(index));
+    if (index < bitSize_) {
+        pmem_[this->getIntIndex(index)] & ~(this->bitMask(index));
+    }
+    else {
+        throw std::out_of_range("BitField::setBitFalse error: index >= bitSize_");
+    }
 }
 
 void BitField::resize(const size_t size)
@@ -221,5 +231,31 @@ std::ostream& operator <<(std::ostream& os, BitField& obj)
 
 std::istream& operator >>(std::istream& is, BitField& obj)
 {
+    std::string i_buffer = "";
+
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore();
+    }
+    std::getline(is >> std::ws, i_buffer);
+
+    try {
+        for (size_t i = 0; i < i_buffer.size(); i++) {
+            char c_temp = i_buffer[i];
+
+            if (c_temp == '1') {
+                obj.setBitTrue(i);
+            }
+            else if (c_temp == '0') {
+                obj.setBitFalse(i);
+            }
+            else {
+                break;
+            }
+        }
+    }
+    catch (std::exception& e) {
+        throw;
+    }
 
 }
