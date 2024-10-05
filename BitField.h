@@ -28,5 +28,8 @@ public:
 	BitField(const size_t& n);
 	BitField(const BitField& obj2);
 	~BitField();
+
+	friend std::istream& operator >>(std::istream& is, BitField& obj);
+	friend std::ostream& operator <<(std::ostream& os, BitField& obj);
 };
 

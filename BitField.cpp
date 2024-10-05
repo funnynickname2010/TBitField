@@ -23,7 +23,7 @@ size_t BitField::getBitSize() const
 bool BitField::getBitState(const unsigned int bitIndex_) const
 {
     bool result = 0;
-    if (bitIndex_ < memSize_) {
+    if (this->getIntIndex(bitIndex_) < memSize_) {
         unsigned int bit_mask = this->bitMask(bitIndex_);
         
         if ((bit_mask & pmem_[this->getIntIndex(bitIndex_)]) != 0) {
@@ -204,4 +204,22 @@ BitField::BitField(const BitField& obj2)
 BitField::~BitField()
 {
     delete[] pmem_;
+}
+
+std::ostream& operator <<(std::ostream& os, BitField& obj)
+{
+    try {
+        for (size_t i = 0; i < obj.bitSize_; i++) {
+            os << obj.getBitState(i);
+        }
+    }
+    catch (std::exception& e) {
+        throw;
+    }
+    return os;
+}
+
+std::istream& operator >>(std::istream& is, BitField& obj)
+{
+
 }
