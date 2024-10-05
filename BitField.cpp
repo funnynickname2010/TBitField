@@ -240,7 +240,7 @@ std::istream& operator >>(std::istream& is, BitField& obj)
     std::getline(is >> std::ws, i_buffer);
 
     try {
-        for (size_t i = 0; i < i_buffer.size(); i++) {
+        for (size_t i = 0; (i < i_buffer.size()) && (i < obj.bitSize_); i++) {
             char c_temp = i_buffer[i];
 
             if (c_temp == '1') {
