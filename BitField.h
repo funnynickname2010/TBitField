@@ -7,17 +7,17 @@ class BitField
 	unsigned int memSize_;
 	unsigned int bitSize_;
 
-	unsigned int getIntIndex(const unsigned int bitIndex_) const;
-	unsigned int bitMask(const unsigned int location) const;
+	unsigned int getIntIndex(const unsigned int bit_index) const;
+	unsigned int bitMask(const unsigned int index) const;
 
 public:
 
 	size_t getMemSize() const;
 	size_t getBitSize() const;
-	bool getBitState(const unsigned int bitIndex_) const;
+	bool getBitState(const unsigned int index) const;
 
-	void setBitTrue(const size_t index);
-	void setBitFalse (const size_t index);
+	void setBitTrue(const unsigned int index);
+	void setBitFalse (const unsigned int index);
 	void resize(const size_t size);
 
 	BitField& operator =(const BitField& obj2);
@@ -28,5 +28,8 @@ public:
 	BitField(const size_t& n);
 	BitField(const BitField& obj2);
 	~BitField();
+
+	friend std::istream& operator >>(std::istream& is, BitField& obj);
+	friend std::ostream& operator <<(std::ostream& os, BitField& obj);
 };
 
