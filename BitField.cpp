@@ -72,7 +72,7 @@ size_t BitField::IntIndex(const unsigned int bit_index) const
 BitField::BitField(const size_t& n)
 {
 	used_bits = n;
-	reserved_ints = this->IntIndex(n);
+	reserved_ints = this->IntIndex(n) + 1;
 	bitarray = new unsigned int[reserved_ints];
 
 	std::fill_n(bitarray, reserved_ints, 0);
@@ -144,15 +144,15 @@ BitField BitField::operator &(const BitField& obj2) const
 	unsigned int result_bitfield_size;
 	int smaller_bitfield_size;
 
-	if (reserved_ints >= obj2.reserved_ints)
+	if (used_bits >= obj2.used_bits)
 	{
-		result_bitfield_size = reserved_ints;
-		smaller_bitfield_size = obj2.reserved_ints;
+		result_bitfield_size = used_bits;
+		smaller_bitfield_size = obj2.used_bits;
 	}
 	else
 	{
-		result_bitfield_size = obj2.reserved_ints;
-		smaller_bitfield_size = reserved_ints;
+		result_bitfield_size = obj2.used_bits;
+		smaller_bitfield_size = used_bits;
 	}
 
 	BitField result(result_bitfield_size);
@@ -179,7 +179,7 @@ BitField BitField::operator |(const BitField& obj2) const
 	unsigned int result_bitfield_size;
 	int smaller_bitfield_size;
 
-	if (reserved_ints >= obj2.reserved_ints)
+	if (used_bits >= obj2.used_bits)
 	{
 		result_bitfield_size = reserved_ints;
 		smaller_bitfield_size = obj2.reserved_ints;
@@ -190,7 +190,7 @@ BitField BitField::operator |(const BitField& obj2) const
 		smaller_bitfield_size = reserved_ints;
 	}
 
-	BitField result(result_bitfield_size);
+	BitField result(result_bitfield_size * sizeof(unsigned int));
 
 	if (used_bits > obj2.used_bits)
 	{
